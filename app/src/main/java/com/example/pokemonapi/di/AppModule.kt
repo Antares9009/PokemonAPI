@@ -1,7 +1,7 @@
 package com.example.pokemonapi.di
 
-import PokeAPI
-import com.example.pokemonapi.PokemonRepository
+import com.example.pokemonapi.network.PokeAPI
+import com.example.pokemonapi.network.PokemonRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,19 +16,17 @@ import javax.inject.Singleton
 object AppModule {
     const val BASE_URL = "https://pokeapi.co/api/v2/"
 
-    @Singleton
-    @Provides
-    fun providePokemonRepository(
-        api: PokeAPI,
-    ) = PokemonRepository(api) as PokemonRepository
 
     @Singleton
     @Provides
-    fun providePokeApi(): PokeAPI {
-        return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
-            .build()
-            .create(PokeAPI::class.java)
+    fun provideRetrofit() : Retrofit {
+        return  Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(BASE_URL)
+                .build()
     }
+
+    @Singleton
+    @Provides
+    fun providePokeApi(retrofit: Retrofit): PokeAPI = retrofit.create(PokeAPI::class.java)
 }
